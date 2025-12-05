@@ -1,8 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import MenuComponent from "./MenuComponent";
-import HeaderComponent from "./HeaderComponent";
-import FooterComponent from "./FooterComponent";
+import MenuComponent from "../components/MenuComponent";
+import HeaderComponent from "../components/HeaderComponent";
+import FooterComponent from "../components/FooterComponent";
 
 import {
     MainContainer,
@@ -14,7 +14,7 @@ import {
     DynamicContent
 } from "../styles/DashboardStyles";
 
-export default function DashboardComponent() {
+export default function PrivateLayout() {
   return (
     <MainContainer>
       <LayoutWrapper>

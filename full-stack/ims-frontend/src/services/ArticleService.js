@@ -4,6 +4,8 @@ const REST_API_ART = '/articles';
 
 export const createArticle = (article) => securedAxiosInstance.post(`${REST_API_ART}/create`, article);
 
+export const updateArticle = (articleId, article) => securedAxiosInstance.put(`${REST_API_ART}/update/${articleId}`, article);
+
 export const listArticles = () => securedAxiosInstance.get(`${REST_API_ART}/all`);
 
 export const getArticle = (articleId) => securedAxiosInstance.get(`${REST_API_ART}/id/${articleId}`);

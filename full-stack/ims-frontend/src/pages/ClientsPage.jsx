@@ -71,18 +71,18 @@ const ClientsPage = () => {
                     <td>{client.adresse.codePostal}</td>
                     <td>{client.adresse.pays}</td>
                     <td>
-                    <button
-                        className="btn btn-info btn-sm me-2"
-                        onClick={() => updateClient(client.id)}
-                    >
-                        Modifier
-                    </button>
-                    <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => removeClient(client.id)}
-                    >
-                        Supprimer
-                    </button>
+                        <button
+                            className="btn btn-info btn-sm me-2"
+                            onClick={() => updateClient(client.id)}
+                        >
+                            Modifier
+                        </button>
+                        <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => removeClient(client.id)}
+                        >
+                            Supprimer
+                        </button>
                     </td>
                 </tr>
                 ))}
