@@ -1,4 +1,5 @@
 import securedAxiosInstance from "./AxiosInstance";
+import publicAxiosInstance from "./AxiosInstancePublic";
 
 const REST_API_COMPANY = '/entreprises';
 
@@ -9,7 +10,7 @@ export const getCompany = (companyId) => securedAxiosInstance.get(`${REST_API_CO
 export const createCompany = (company) => {
     console.log("Données reçues par le service :", company);
     
-    return securedAxiosInstance.post(`${REST_API_COMPANY}/create`, company)
+    return publicAxiosInstance.post(`${REST_API_COMPANY}/create`, company)
         .catch(error => {
             console.log("Erreur backend :", error.response?.data); 
         });

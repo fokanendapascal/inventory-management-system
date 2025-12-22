@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 /* Container général du menu */
 export const MenuContainer = styled.div`
-    width: 100%,
+    width: 100%;
     padding: 10px
 `;
 

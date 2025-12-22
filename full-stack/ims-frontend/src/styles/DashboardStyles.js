@@ -34,7 +34,6 @@ export const Sidebar = styled.aside`
     small {
         opacity: 0.8;
     }
-
       
 `;
 

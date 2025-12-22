@@ -37,7 +37,8 @@ const ChangePasswordComponent = () => {
         const payload = {
             email: formData.email,
             ancienMotDePasse: formData.ancienMotDePasse,
-            motDePasse: formData.motDePasse
+            motDePasse: formData.motDePasse,
+            confirmMotDePasse: formData.confirmMotDePasse
         };
 
         changePassword(payload)

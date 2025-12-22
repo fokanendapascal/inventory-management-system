@@ -6,7 +6,7 @@ const InscriptionPage = () => {
 
     const navigator = useNavigate();
 
-    // L'état reflète la structure du DTO backend (Entreprise avec Adresse imbriquée)
+    // L'état reflète la structure du DTO backend (inclut les champs Admin)
     const [entreprise, setEntreprise] = useState({
         nom: '',
         codeFiscal: '',
@@ -15,6 +15,10 @@ const InscriptionPage = () => {
         numTel: '',
         photo: '',
         siteWeb: '',
+        // 🆕 CHAMPS ADMIN REQUIS
+        nomAdmin: '', 
+        prenomAdmin: '',
+        // ----------------------
         adresse: {
             adresse1: '',
             adresse2: '',
@@ -27,7 +31,7 @@ const InscriptionPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // GESTION CHAMPS ENTREPRISE (non adresse)
+    // GESTION CHAMPS ENTREPRISE (et Admin)
     const handleChange = (e) => {
         const { name, value } = e.target;
         setEntreprise(prev => ({ ...prev, [name]: value }));
@@ -48,9 +52,7 @@ const InscriptionPage = () => {
         setError('');
 
         try {
-            // ➡️ DTO FINAL ENVOYÉ:
-            console.log("Tentative d'inscription avec:", entreprise);
-            
+            // Le DTO 'entreprise' contient maintenant les champs nomAdmin/prenomAdmin 
             await createCompany(entreprise);
             
             alert("Inscription réussie ! Redirection vers la page de connexion.");
@@ -58,8 +60,9 @@ const InscriptionPage = () => {
 
         } catch (err) {
             console.error("Erreur d'inscription:", err);
-            // Récupérer le message d'erreur du backend (ex: err.response.data.message)
-            setError(err.message || "Une erreur est survenue lors de l'inscription.");
+            // Améliorer la gestion d'erreur pour extraire le message du backend
+            const backendError = err.response?.data?.message || err.message;
+            setError(backendError || "Une erreur est survenue lors de l'inscription.");
             setLoading(false);
         }
     };
@@ -78,9 +81,51 @@ const InscriptionPage = () => {
                         {/* Afficher l'erreur si elle existe */}
                         {error && <div className="alert alert-danger">{error}</div>}
 
+                        {/* ======================================================= */}
+                        {/* 🆕 SECTION ADMIN INITIAL */}
+                        {/* ======================================================= */}
+                        <h5 className="mt-4"><i className="fa fa-user blue-color"></i>&nbsp;Administrateur initial</h5>
+                        <p className='text-muted small'>Cet utilisateur sera le premier administrateur de votre entreprise.</p>
+
+                        <div className="row">
+                            {/* Nom Admin */}
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">Nom de l'Admin</label>
+                                <input 
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Nom de l'administrateur"
+                                    name="nomAdmin"
+                                    value={entreprise.nomAdmin}
+                                    onChange={handleChange}
+                                    required 
+                                />
+                            </div>
+                            {/* Prénom Admin */}
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">Prénom de l'Admin</label>
+                                <input 
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Prénom de l'administrateur"
+                                    name="prenomAdmin"
+                                    value={entreprise.prenomAdmin}
+                                    onChange={handleChange}
+                                    required 
+                                />
+                            </div>
+                        </div>
+
+                        <hr className="my-4"/>
+
+                        {/* ======================================================= */}
+                        {/* 🏢 SECTION DÉTAILS ENTREPRISE */}
+                        {/* ======================================================= */}
+                        <h5 className="mt-4"><i className="fa-solid fa-building blue-color"></i>&nbsp;Détails de l'entreprise</h5>
+
                         {/* Nom */}
                         <div className="mb-3">
-                            <label className="form-label">Nom</label>
+                            <label className="form-label">Nom de l'entreprise</label>
                             <input 
                                 type="text"
                                 className="form-control"
@@ -106,17 +151,43 @@ const InscriptionPage = () => {
                             />
                         </div>
 
-                        {/* Email */}
+                        {/* Email (utilisé comme login ADMIN) */}
                         <div className="mb-3">
-                            <label className="form-label">Email</label>
+                            <label className="form-label">Email (Login Admin)</label>
                             <input 
                                 type="email"
                                 className="form-control"
-                                placeholder="Email"
+                                placeholder="Email (sera le login de l'admin)"
                                 name="email"
                                 value={entreprise.email}
                                 onChange={handleChange}
                                 required
+                            />
+                        </div>
+                        
+                        {/* Description */}
+                        <div className="mb-3">
+                            <label className="form-label">Description</label>
+                            <textarea 
+                                className="form-control"
+                                placeholder="Description"
+                                name="description"
+                                rows="3"
+                                value={entreprise.description}
+                                onChange={handleChange}
+                            ></textarea>
+                        </div>
+                        
+                        {/* Numéro de téléphone */}
+                        <div className="mb-3">
+                            <label className="form-label">Numéro de téléphone</label>
+                            <input 
+                                type="text"
+                                className="form-control"
+                                placeholder="+237..."
+                                name="numTel"
+                                value={entreprise.numTel}
+                                onChange={handleChange}
                             />
                         </div>
 
@@ -146,8 +217,11 @@ const InscriptionPage = () => {
                             />
                         </div>
 
-                        {/* Adresse */}
-                        <h5 className="mt-4"><i className="fa-solid fa-location-dot blue-color"></i>&nbsp;Adresse</h5>
+
+                        {/* ======================================================= */}
+                        {/* 📍 SECTION ADRESSE */}
+                        {/* ======================================================= */}
+                        <h5 className="mt-4"><i className="fa-solid fa-location-dot blue-color"></i>&nbsp;Adresse du siège</h5>
                         
                         {/* ADRESSE 1 & 2 */}
                         <div className="row">
@@ -159,7 +233,7 @@ const InscriptionPage = () => {
                                     placeholder="Adresse 1"
                                     name="adresse1"
                                     value={entreprise.adresse.adresse1}
-                                    onChange={handleAdresseChange} // <== Utilisation de handleAdresseChange
+                                    onChange={handleAdresseChange} 
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
@@ -170,7 +244,7 @@ const InscriptionPage = () => {
                                     placeholder="Adresse 2"
                                     name="adresse2"
                                     value={entreprise.adresse.adresse2}
-                                    onChange={handleAdresseChange} // <== Utilisation de handleAdresseChange
+                                    onChange={handleAdresseChange} 
                                 />
                             </div>
                         </div>
@@ -185,7 +259,7 @@ const InscriptionPage = () => {
                                     placeholder="Ville"
                                     name="ville"
                                     value={entreprise.adresse.ville}
-                                    onChange={handleAdresseChange} // <== Utilisation de handleAdresseChange
+                                    onChange={handleAdresseChange} 
                                 />
                             </div>
                             <div className="col-md-4 mb-3">
@@ -196,7 +270,7 @@ const InscriptionPage = () => {
                                     placeholder="Code postal"
                                     name="codePostal"
                                     value={entreprise.adresse.codePostal}
-                                    onChange={handleAdresseChange} // <== Utilisation de handleAdresseChange
+                                    onChange={handleAdresseChange} 
                                 />
                             </div>
                             <div className="col-md-4 mb-3">
@@ -207,50 +281,24 @@ const InscriptionPage = () => {
                                     placeholder="Pays"
                                     name="pays"
                                     value={entreprise.adresse.pays}
-                                    onChange={handleAdresseChange} // <== Utilisation de handleAdresseChange
+                                    onChange={handleAdresseChange} 
                                 />
                             </div>
                         </div>
 
-                        {/* Description */}
-                        <div className="mb-3">
-                            <label className="form-label">Description</label>
-                            <textarea 
-                                className="form-control"
-                                placeholder="Description"
-                                name="description"
-                                rows="3"
-                                value={entreprise.description}
-                                onChange={handleChange}
-                            ></textarea>
-                        </div>
-
-                        {/* Téléphone */}
-                        <div className="mb-3">
-                            <label className="form-label">Numéro de téléphone</label>
-                            <input 
-                                type="text"
-                                className="form-control"
-                                placeholder="+237..."
-                                name="numTel"
-                                value={entreprise.numTel}
-                                onChange={handleChange}
-                            />
-                        </div>
-
                         {/* Boutons */}
-                        <div className="mb-3 d-flex justify-content-between">
+                        <div className="mb-3 d-flex justify-content-between mt-4">
                             <button 
                                 type="button" 
                                 className="btn btn-outline-secondary"
-                                onClick={() => navigator('/login')} // <== Redirection vers login
+                                onClick={() => navigator('/login')} 
                             >
                                 <i className="fa fa-sign-in-alt"></i> Se connecter
                             </button>
                             <button 
                                 type="submit" 
                                 className="btn btn-primary"
-                                disabled={loading} // <== Désactiver pendant le chargement
+                                disabled={loading} 
                             >
                                 {loading ? 'En cours...' : (
                                     <>

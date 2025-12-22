@@ -36,7 +36,15 @@ const ProfilPage = () => {
                     <div className="mb-3">
                         <h2>{user.nom}</h2>
                         <small className="form-text text-muted">
-                            {user.adresse}
+                            {user.adresse ? (
+                                <>
+                                    {user.adresse.adresse1} <br />
+                                    {user.adresse.adresse2 && <>{user.adresse.adresse2}<br /></>}
+                                    {user.adresse.ville}, {user.adresse.codePostal}, {user.adresse.pays}
+                                </>
+                            ) : (
+                                "Aucune adresse"
+                            )}
                         </small>
                     </div>
 
@@ -79,7 +87,18 @@ const ProfilPage = () => {
                         </tr>
                         <tr>
                             <th scope="row">Adresse</th>
-                            <td>{user.adresse}</td>
+                            <td>
+                                {user.adresse ? (
+                                    <>
+                                        {user.adresse.adresse1} <br />
+                                        {user.adresse.adresse2 && <>{user.adresse.adresse2}<br /></>}
+                                        {user.adresse.ville}, {user.adresse.codePostal}, {user.adresse.pays}
+                                    </>
+                                ) : (
+                                    "Aucune adresse"
+                                )}
+                            </td>
+                             
                         </tr>
                         <tr>
                             <th scope="row">Entreprise</th>
