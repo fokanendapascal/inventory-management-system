@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 
 import ClientsPage from "./pages/ClientsPage";
 import FournisseursPage from "./pages/FournisseursPage";
@@ -8,6 +8,7 @@ import "./App.css";
 import NewCltFrsComponent from "./components/NewCltFrsComponent";
 import CltFrsPage from "./pages/CltFrsPage";
 import CmdsCltsPage from "./pages/CmdsCltsPage";
+import OverviewPage from "./pages/OverviewPage.jsx";
 import StatistiquesPage from "./pages/StatistiquesPage";
 import ArticlesPage from "./pages/ArticlesPage";
 import MvtStockPage from "./pages/MvtStockPage";
@@ -49,7 +50,8 @@ function App() {
                     <Route element={<PrivateLayout />}>
 
                         {/* DASHBOARD / HOME */}
-                        <Route path="/" element={<StatistiquesPage />} />
+                        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                        <Route path="/dashboard" element={<OverviewPage />} />
 
                         {/* Statistiques */}
                         <Route path="statistiques" element={<StatistiquesPage />} />

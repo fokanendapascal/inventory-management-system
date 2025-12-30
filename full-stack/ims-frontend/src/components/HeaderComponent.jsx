@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     HeaderContainer,
     LeftBlock,
@@ -9,27 +9,65 @@ import {
 } from "../styles/HeaderStyles";
 
 export default function HeaderComponent() {
+
+    const [searchValue, setSearchValue] = useState("");
+
+    // Initialisation sécurisée
+    const [user] = useState(() => {
+        try {
+            const savedUser = localStorage.getItem('user');
+            return savedUser ? JSON.parse(savedUser) : null;
+        } catch (error) {
+            console.error("Erreur de lecture du localStorage", error);
+            return null;
+        }
+    });
+
+    const handleChange = (e) => setSearchValue(e.target.value);
+
+    const handleSearch = () => {
+        if (!searchValue.trim()) return;
+        searchUser(searchValue)
+            .then(response => console.log("Résultat :", response.data))
+            .catch(error => console.error("Erreur recherche :", error));
+    };
+
+    const getInitials = (user) => {
+        if (user?.firstName) return user.firstName.charAt(0).toUpperCase();
+        if (user?.username) return user.username.charAt(0).toUpperCase();
+        return "?";
+    };
+
     return (
         <HeaderContainer>
 
-        {/* Search bar */}
-        <LeftBlock>
-            <SearchGroup>
-            <input 
-                type="text" 
-                placeholder="Rechercher…" 
-            />
-            <span>
-                <i className="fa-solid fa-magnifying-glass"></i>
-            </span>
-            </SearchGroup>
-        </LeftBlock>
+            {/* Search bar */}
+            <LeftBlock>
+                <SearchGroup>
+                    <input
+                        type="text"
+                        placeholder="Rechercher…"
+                        className='form-control'
+                        value={searchValue}
+                        onChange={handleChange}
+                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    />
+                    <span onClick={handleSearch} style={{cursor: 'pointer'}}>
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                </SearchGroup>
+            </LeftBlock>
 
-        {/* Right side */}
-        <RightBlock>
-            <UserInfo>Bonjour</UserInfo>
-            <Avatar />
-        </RightBlock>
+            {/* Right side */}
+            <RightBlock>
+                <UserInfo>
+                    <span>Bonjour, <strong>{user?.firstName || user?.username || 'Utilisateur'}</strong></span>
+                </UserInfo>
+                {/* L'initiale est calculée dynamiquement */}
+                <Avatar title={user?.firstName || 'User'}>
+                    {getInitials(user)}
+                </Avatar>
+            </RightBlock>
 
         </HeaderContainer>
     );

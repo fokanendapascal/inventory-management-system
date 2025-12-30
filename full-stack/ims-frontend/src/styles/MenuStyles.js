@@ -52,7 +52,7 @@ export const SubMenuList = styled.ul`
     margin-top: 5px;
     border-left: 2px solid #dcdcdc;
 
-    max-height: ${({ isOpen }) => (isOpen ? "300px" : "0px")};
+    max-height: ${({ $isOpen }) => ($isOpen ? "300px" : "0px")};
     overflow: hidden;
     transition: max-height 0.35s ease-out;
 `;
