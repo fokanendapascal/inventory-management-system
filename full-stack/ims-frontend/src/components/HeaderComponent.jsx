@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     HeaderContainer,
     LeftBlock,
@@ -7,69 +7,78 @@ import {
     UserInfo,
     Avatar
 } from "../styles/HeaderStyles";
+import { getCurrentUser, getUserByEmail } from "../services/UtilisateurService";
 
 export default function HeaderComponent() {
-
     const [searchValue, setSearchValue] = useState("");
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Initialisation sécurisée
-    const [user] = useState(() => {
-        try {
-            const savedUser = localStorage.getItem('user');
-            return savedUser ? JSON.parse(savedUser) : null;
-        } catch (error) {
-            console.error("Erreur de lecture du localStorage", error);
-            return null;
-        }
-    });
+    // 1. Récupérer l'utilisateur connecté au montage du composant
+    useEffect(() => {
+        getCurrentUser()
+            .then(response => {
+                setUser(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error("Erreur lors de la récupération du profil :", error);
+                setLoading(false);
+            });
+    }, []);
 
     const handleChange = (e) => setSearchValue(e.target.value);
 
+    // 2. Logique de recherche (Utilisation de getUserByEmail au lieu de getCurrentUser)
     const handleSearch = () => {
         if (!searchValue.trim()) return;
-        searchUser(searchValue)
-            .then(response => console.log("Résultat :", response.data))
-            .catch(error => console.error("Erreur recherche :", error));
+        
+        getUserByEmail(searchValue)
+            .then(response => {
+                console.log("Utilisateur trouvé :", response.data);
+                // Logique suite à la recherche (ex: redirection ou affichage)
+            })
+            .catch(error => console.error("Recherche infructueuse :", error));
     };
 
-    const getInitials = (user) => {
-        if (user?.firstName) return user.firstName.charAt(0).toUpperCase();
-        if (user?.username) return user.username.charAt(0).toUpperCase();
+    const getInitials = (userData) => {
+        if (userData?.prenom) return userData.prenom.charAt(0).toUpperCase();
+        if (userData?.nom) return userData.nom.charAt(0).toUpperCase();
         return "?";
     };
 
+    if (loading) return null; // Ou un spinner léger
+
     return (
         <HeaderContainer>
-
-            {/* Search bar */}
+            {/* Barre de recherche */}
             <LeftBlock>
                 <SearchGroup>
                     <input
                         type="text"
-                        placeholder="Rechercher…"
+                        placeholder="Rechercher par email..."
                         className='form-control'
                         value={searchValue}
                         onChange={handleChange}
                         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                     />
-                    <span onClick={handleSearch} style={{cursor: 'pointer'}}>
+                    <span onClick={handleSearch} style={{ cursor: 'pointer' }}>
                         <i className="fa-solid fa-magnifying-glass"></i>
                     </span>
                 </SearchGroup>
             </LeftBlock>
 
-            {/* Right side */}
+            {/* Côté droit : Infos utilisateur */}
             <RightBlock>
                 <UserInfo>
-                    <span>Bonjour, <strong>{user?.firstName || user?.username || 'Utilisateur'}</strong></span>
+                    <span>
+                        Bonjour, <strong>{user?.prenom || user?.nom || 'Utilisateur'}</strong>
+                    </span>
                 </UserInfo>
-                {/* L'initiale est calculée dynamiquement */}
-                <Avatar title={user?.firstName || 'User'}>
+                <Avatar title={user?.prenom || 'User'}>
                     {getInitials(user)}
                 </Avatar>
             </RightBlock>
-
         </HeaderContainer>
     );
 }
-
